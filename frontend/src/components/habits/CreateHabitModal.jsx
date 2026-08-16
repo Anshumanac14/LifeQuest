@@ -104,20 +104,29 @@ const CreateHabitModal = ({
   const [form, setForm] = useState(() =>
     editHabit
       ? {
-          name: editHabit.name,
+          name: editHabit.name || '',
           description: editHabit.description || '',
-          category: editHabit.category,
-          difficulty: editHabit.difficulty,
-          target: editHabit.target || '',
-          minimumTarget: editHabit.minimumTarget || '',
+          category: editHabit.category || 'Learning',
+          difficulty: editHabit.difficulty || 'Medium',
+          target:
+            editHabit.target !== undefined &&
+            editHabit.target !== null
+              ? String(editHabit.target)
+              : '',
+          minimumTarget:
+            editHabit.minimumTarget !== undefined &&
+            editHabit.minimumTarget !== null
+              ? String(editHabit.minimumTarget)
+              : '',
           stat: editHabit.stat || 'none',
           icon: editHabit.icon || '⚡'
         }
-      : DEFAULT_FORM
+      : { ...DEFAULT_FORM }
   );
 
   const [loading, setLoading] = useState(false);
   const [showIconPicker, setShowIconPicker] = useState(false);
+  const [errors, setErrors] = useState({});
 
   /* =========================
      XP CALCULATION
@@ -169,6 +178,80 @@ const CreateHabitModal = ({
 
       return updated;
     });
+
+    // Remove error when user starts fixing the field
+    setErrors(prev => ({
+      ...prev,
+      [field]: ''
+    }));
+  };
+
+  /* =========================
+     NUMERIC INPUT HANDLER
+     ========================= */
+
+  const handleTargetChange = (field, value) => {
+    // Allow ONLY digits
+    const numericValue = value.replace(/\D/g, '');
+
+    handleChange(field, numericValue);
+  };
+
+  /* =========================
+     VALIDATION
+  ========================= */
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    // Quest name
+    if (!form.name.trim()) {
+      newErrors.name =
+        'Quest title is required.';
+    }
+
+    // Description
+    if (!form.description.trim()) {
+      newErrors.description =
+        'Quest description is required.';
+    }
+
+    // Full target
+    if (!form.target) {
+      newErrors.target =
+        'Full target is required.';
+    } else if (
+      Number(form.target) <= 0
+    ) {
+      newErrors.target =
+        'Full target must be greater than 0.';
+    }
+
+    // Minimum target
+    if (!form.minimumTarget) {
+      newErrors.minimumTarget =
+        'Minimum target is required.';
+    } else if (
+      Number(form.minimumTarget) <= 0
+    ) {
+      newErrors.minimumTarget =
+        'Minimum target must be greater than 0.';
+    }
+
+    // Minimum cannot exceed full target
+    if (
+      form.target &&
+      form.minimumTarget &&
+      Number(form.minimumTarget) >
+        Number(form.target)
+    ) {
+      newErrors.minimumTarget =
+        'Minimum target cannot be greater than full target.';
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
   };
 
   /* =========================
@@ -178,24 +261,55 @@ const CreateHabitModal = ({
   const handleSubmit = async e => {
     e.preventDefault();
 
-    if (!form.name.trim()) return;
+    if (loading) return;
+
+    const isValid = validateForm();
+
+    if (!isValid) {
+      return;
+    }
 
     setLoading(true);
 
     try {
-      await onSubmit(form);
+      // Convert target values to actual numbers
+      const submitData = {
+        ...form,
+        name: form.name.trim(),
+        description: form.description.trim(),
+        target: Number(form.target),
+        minimumTarget: Number(form.minimumTarget)
+      };
 
-      setForm(DEFAULT_FORM);
+      await onSubmit(submitData);
+
+      setForm({ ...DEFAULT_FORM });
+      setErrors({});
+      setShowIconPicker(false);
+
       onClose();
     } finally {
       setLoading(false);
     }
   };
 
+  /* =========================
+     CLOSE MODAL
+  ========================= */
+
+  const handleClose = () => {
+    if (loading) return;
+
+    setErrors({});
+    setShowIconPicker(false);
+
+    onClose();
+  };
+
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleClose}
       title={
         editHabit
           ? 'Edit Quest'
@@ -205,6 +319,7 @@ const CreateHabitModal = ({
 
       <form
         onSubmit={handleSubmit}
+        noValidate
         style={{
           padding: '20px 24px 24px'
         }}
@@ -289,7 +404,7 @@ const CreateHabitModal = ({
 
             <input
               className="form-input"
-              placeholder="e.g. Study DSA for 60m"
+              placeholder="e.g. Study DSA for 60 minutes"
               value={form.name}
               onChange={e =>
                 handleChange(
@@ -297,8 +412,24 @@ const CreateHabitModal = ({
                   e.target.value
                 )
               }
-              required
+              style={{
+                borderColor: errors.name
+                  ? 'var(--red)'
+                  : undefined
+              }}
             />
+
+            {errors.name && (
+              <div
+                style={{
+                  marginTop: 5,
+                  fontSize: 11,
+                  color: 'var(--red)'
+                }}
+              >
+                {errors.name}
+              </div>
+            )}
 
           </div>
         </div>
@@ -391,7 +522,7 @@ const CreateHabitModal = ({
         >
 
           <label className="form-label">
-            Quest Description
+            Quest Description *
           </label>
 
           <input
@@ -405,7 +536,25 @@ const CreateHabitModal = ({
                 e.target.value
               )
             }
+
+            style={{
+              borderColor: errors.description
+                ? 'var(--red)'
+                : undefined
+            }}
           />
+
+          {errors.description && (
+            <div
+              style={{
+                marginTop: 5,
+                fontSize: 11,
+                color: 'var(--red)'
+              }}
+            >
+              {errors.description}
+            </div>
+          )}
 
         </div>
 
@@ -508,46 +657,149 @@ const CreateHabitModal = ({
           }}
         >
 
+          {/* Full Target */}
+
           <div>
 
             <label className="form-label">
-              Full Target
+              Full Target *
             </label>
 
-            <input
-              className="form-input"
-              placeholder="e.g. 60 minutes"
-              value={form.target}
+            <div
+              style={{
+                position: 'relative'
+              }}
+            >
+              <input
+                className="form-input"
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                placeholder="e.g. 60"
+                value={form.target}
 
-              onChange={e =>
-                handleChange(
-                  'target',
-                  e.target.value
-                )
-              }
-            />
+                onChange={e =>
+                  handleTargetChange(
+                    'target',
+                    e.target.value
+                  )
+                }
+
+                style={{
+                  paddingRight: 68,
+                  borderColor: errors.target
+                    ? 'var(--red)'
+                    : undefined
+                }}
+              />
+
+              <span
+                style={{
+                  position: 'absolute',
+                  right: 14,
+                  top: '50%',
+                  transform:
+                    'translateY(-50%)',
+
+                  color:
+                    'var(--text-muted)',
+
+                  fontSize: 12,
+
+                  fontWeight: 500,
+
+                  pointerEvents: 'none'
+                }}
+              >
+                minutes
+              </span>
+            </div>
+
+            {errors.target && (
+              <div
+                style={{
+                  marginTop: 5,
+                  fontSize: 11,
+                  color: 'var(--red)'
+                }}
+              >
+                {errors.target}
+              </div>
+            )}
 
           </div>
 
 
+          {/* Minimum Target */}
+
           <div>
 
             <label className="form-label">
-              Minimum Target
+              Minimum Target *
             </label>
 
-            <input
-              className="form-input"
-              placeholder="e.g. 10 minutes"
-              value={form.minimumTarget}
+            <div
+              style={{
+                position: 'relative'
+              }}
+            >
+              <input
+                className="form-input"
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                placeholder="e.g. 10"
+                value={form.minimumTarget}
 
-              onChange={e =>
-                handleChange(
-                  'minimumTarget',
-                  e.target.value
-                )
-              }
-            />
+                onChange={e =>
+                  handleTargetChange(
+                    'minimumTarget',
+                    e.target.value
+                  )
+                }
+
+                style={{
+                  paddingRight: 68,
+                  borderColor:
+                    errors.minimumTarget
+                      ? 'var(--red)'
+                      : undefined
+                }}
+              />
+
+              <span
+                style={{
+                  position: 'absolute',
+                  right: 14,
+                  top: '50%',
+                  transform:
+                    'translateY(-50%)',
+
+                  color:
+                    'var(--text-muted)',
+
+                  fontSize: 12,
+
+                  fontWeight: 500,
+
+                  pointerEvents: 'none'
+                }}
+              >
+                minutes
+              </span>
+            </div>
+
+            {errors.minimumTarget && (
+              <div
+                style={{
+                  marginTop: 5,
+                  fontSize: 11,
+                  color: 'var(--red)'
+                }}
+              >
+                {errors.minimumTarget}
+              </div>
+            )}
 
           </div>
 
@@ -743,10 +995,7 @@ const CreateHabitModal = ({
         <button
           type="submit"
 
-          disabled={
-            loading ||
-            !form.name.trim()
-          }
+          disabled={loading}
 
           className="btn btn-primary"
 
@@ -759,8 +1008,7 @@ const CreateHabitModal = ({
             fontSize: 15,
 
             opacity:
-              loading ||
-              !form.name.trim()
+              loading
                 ? 0.6
                 : 1,
 
