@@ -16,16 +16,28 @@ const register = async (req, res, next) => {
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
-      return res.status(400).json({ success: false, message: 'Please provide name, email, and password' });
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide name, email, and password',
+      });
     }
 
     if (password.length < 6) {
-      return res.status(400).json({ success: false, message: 'Password must be at least 6 characters' });
+      return res.status(400).json({
+        success: false,
+        message: 'Password must be at least 6 characters',
+      });
     }
 
-    const existingUser = await User.findOne({ email: email.toLowerCase() });
+    const existingUser = await User.findOne({
+      email: email.toLowerCase(),
+    });
+
     if (existingUser) {
-      return res.status(400).json({ success: false, message: 'Email already registered' });
+      return res.status(400).json({
+        success: false,
+        message: 'Email already registered',
+      });
     }
 
     const user = await User.create({
@@ -122,29 +134,36 @@ const login = async (req, res, next) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ success: false, message: 'Please provide email and password' });
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide email and password',
+      });
     }
 
-    // Auto-seed demo user if requested
-    if (email.toLowerCase() === 'alex@lifequest.app') {
-      const { seedDemoUser } = require('../services/seedService');
-      await seedDemoUser();
-    }
+    // Find user and include password for comparison
+    const user = await User.findOne({
+      email: email.toLowerCase().trim(),
+    }).select('+password');
 
-    // Include password in query
-    const user = await User.findOne({ email: email.toLowerCase() }).select('+password');
     if (!user) {
-      return res.status(401).json({ success: false, message: 'Invalid email or password' });
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid email or password',
+      });
     }
 
     const isMatch = await user.comparePassword(password);
+
     if (!isMatch) {
-      return res.status(401).json({ success: false, message: 'Invalid email or password' });
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid email or password',
+      });
     }
 
     const token = generateToken(user._id);
 
-    res.json({
+    res.status(200).json({
       success: true,
       message: 'Login successful!',
       token,
@@ -173,7 +192,11 @@ const login = async (req, res, next) => {
 // @route POST /api/auth/logout
 const logout = async (req, res) => {
   res.clearCookie('token');
-  res.json({ success: true, message: 'Logged out successfully' });
+
+  res.json({
+    success: true,
+    message: 'Logged out successfully',
+  });
 };
 
 // @desc  Get current user profile
@@ -181,6 +204,7 @@ const logout = async (req, res) => {
 const getMe = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id);
+
     res.json({
       success: true,
       user: {
@@ -206,4 +230,9 @@ const getMe = async (req, res, next) => {
   }
 };
 
-module.exports = { register, login, logout, getMe };
+module.exports = {
+  register,
+  login,
+  logout,
+  getMe,
+};
