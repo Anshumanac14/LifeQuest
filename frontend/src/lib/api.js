@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: import.meta.env.VITE_API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -24,23 +24,11 @@ api.interceptors.request.use(
 // Response interceptor - handle auth errors
 api.interceptors.response.use(
   (response) => response,
-
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('lq_token');
       localStorage.removeItem('lq_user');
-
-      // Don't redirect/reload when the user is already
-      // on an authentication page.
-      const currentPath = window.location.pathname;
-
-      const isAuthPage =
-        currentPath === '/login' ||
-        currentPath === '/register';
-
-      if (!isAuthPage) {
-        window.location.href = '/login';
-      }
+      window.location.href = '/login';
     }
 
     return Promise.reject(error);
