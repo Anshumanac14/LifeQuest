@@ -7,7 +7,7 @@ const api = axios.create({
   },
 });
 
-// Request interceptor - attach token
+// Attach JWT token to every request
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('lq_token');
@@ -18,16 +18,21 @@ api.interceptors.request.use(
 
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    return Promise.reject(error);
+  }
 );
 
-// Response interceptor - handle auth errors
+// Handle authentication errors
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    return response;
+  },
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('lq_token');
       localStorage.removeItem('lq_user');
+
       window.location.href = '/login';
     }
 
