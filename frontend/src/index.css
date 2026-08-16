@@ -317,9 +317,7 @@ h3 {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  * {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
@@ -1676,6 +1674,45 @@ h3 {
 
   box-shadow:
     0 25px 80px rgba(0, 0, 0, 0.6);
+}
+
+
+/* =========================================================
+   MOBILE MODAL SAFETY
+   Keeps the Forge Quest submit button above mobile footer
+   ========================================================= */
+
+@media (max-width: 600px) {
+  .modal-backdrop {
+    align-items: flex-start;
+
+    padding:
+      max(12px, env(safe-area-inset-top))
+      10px
+      max(95px, calc(85px + env(safe-area-inset-bottom)));
+    
+    overflow-y: auto;
+  }
+
+  .modal-content {
+    width: 100%;
+
+    max-height:
+      calc(
+        100vh -
+        max(24px, env(safe-area-inset-top)) -
+        max(95px, calc(85px + env(safe-area-inset-bottom)))
+      );
+
+    margin: 0 auto;
+
+    overflow-y: auto;
+  }
+
+  .modal-content form {
+    padding-bottom:
+      max(28px, calc(24px + env(safe-area-inset-bottom))) !important;
+  }
 }
 
 

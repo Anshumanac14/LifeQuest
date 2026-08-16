@@ -172,14 +172,12 @@ const CreateHabitModal = ({
         field === 'category' &&
         CATEGORY_DEFAULT_STAT[value]
       ) {
-        updated.stat =
-          CATEGORY_DEFAULT_STAT[value];
+        updated.stat = CATEGORY_DEFAULT_STAT[value];
       }
 
       return updated;
     });
 
-    // Remove error when user starts fixing the field
     setErrors(prev => ({
       ...prev,
       [field]: ''
@@ -188,10 +186,10 @@ const CreateHabitModal = ({
 
   /* =========================
      NUMERIC INPUT HANDLER
-     ========================= */
+  ========================= */
 
   const handleTargetChange = (field, value) => {
-    // Allow ONLY digits
+    // Only allow numbers
     const numericValue = value.replace(/\D/g, '');
 
     handleChange(field, numericValue);
@@ -204,41 +202,31 @@ const CreateHabitModal = ({
   const validateForm = () => {
     const newErrors = {};
 
-    // Quest name
     if (!form.name.trim()) {
-      newErrors.name =
-        'Quest title is required.';
+      newErrors.name = 'Quest title is required.';
     }
 
-    // Description
     if (!form.description.trim()) {
       newErrors.description =
         'Quest description is required.';
     }
 
-    // Full target
     if (!form.target) {
       newErrors.target =
         'Full target is required.';
-    } else if (
-      Number(form.target) <= 0
-    ) {
+    } else if (Number(form.target) <= 0) {
       newErrors.target =
         'Full target must be greater than 0.';
     }
 
-    // Minimum target
     if (!form.minimumTarget) {
       newErrors.minimumTarget =
         'Minimum target is required.';
-    } else if (
-      Number(form.minimumTarget) <= 0
-    ) {
+    } else if (Number(form.minimumTarget) <= 0) {
       newErrors.minimumTarget =
         'Minimum target must be greater than 0.';
     }
 
-    // Minimum cannot exceed full target
     if (
       form.target &&
       form.minimumTarget &&
@@ -263,16 +251,13 @@ const CreateHabitModal = ({
 
     if (loading) return;
 
-    const isValid = validateForm();
-
-    if (!isValid) {
+    if (!validateForm()) {
       return;
     }
 
     setLoading(true);
 
     try {
-      // Convert target values to actual numbers
       const submitData = {
         ...form,
         name: form.name.trim(),
@@ -321,7 +306,12 @@ const CreateHabitModal = ({
         onSubmit={handleSubmit}
         noValidate
         style={{
-          padding: '20px 24px 24px'
+          /*
+           * Extra bottom space is important on mobile.
+           * It prevents the submit button from sitting
+           * directly against the bottom of the modal.
+           */
+          padding: '20px 24px 40px'
         }}
       >
 
@@ -337,8 +327,6 @@ const CreateHabitModal = ({
           }}
         >
 
-          {/* Icon */}
-
           <div>
             <label className="form-label">
               Icon
@@ -353,27 +341,19 @@ const CreateHabitModal = ({
                 width: 50,
                 height: 50,
                 fontSize: 23,
-
                 background:
                   'rgba(255,255,255,0.04)',
-
                 border:
                   '1px solid rgba(255,255,255,0.12)',
-
                 borderRadius: 10,
-
                 cursor: 'pointer',
-
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-
                 color: 'white',
-
                 transition:
                   'border-color 0.2s ease, background 0.2s ease'
               }}
-
               onMouseEnter={e => {
                 e.currentTarget.style.background =
                   'rgba(255,255,255,0.07)';
@@ -381,7 +361,6 @@ const CreateHabitModal = ({
                 e.currentTarget.style.borderColor =
                   'rgba(255,255,255,0.22)';
               }}
-
               onMouseLeave={e => {
                 e.currentTarget.style.background =
                   'rgba(255,255,255,0.04)';
@@ -394,10 +373,7 @@ const CreateHabitModal = ({
             </button>
           </div>
 
-          {/* Title */}
-
           <div style={{ flex: 1 }}>
-
             <label className="form-label">
               Quest Title *
             </label>
@@ -430,8 +406,8 @@ const CreateHabitModal = ({
                 {errors.name}
               </div>
             )}
-
           </div>
+
         </div>
 
 
@@ -446,17 +422,12 @@ const CreateHabitModal = ({
               gridTemplateColumns:
                 'repeat(10, 1fr)',
               gap: 6,
-
               marginBottom: 18,
-
               padding: 12,
-
               background:
                 'rgba(255,255,255,0.025)',
-
               border:
                 '1px solid rgba(255,255,255,0.10)',
-
               borderRadius: 12
             }}
           >
@@ -465,7 +436,6 @@ const CreateHabitModal = ({
               <button
                 key={icon}
                 type="button"
-
                 onClick={() => {
                   handleChange(
                     'icon',
@@ -474,31 +444,23 @@ const CreateHabitModal = ({
 
                   setShowIconPicker(false);
                 }}
-
                 style={{
                   width: 34,
                   height: 34,
-
                   fontSize: 17,
-
                   cursor: 'pointer',
-
                   background:
                     form.icon === icon
                       ? 'rgba(124,58,237,0.15)'
                       : 'transparent',
-
                   border:
                     form.icon === icon
                       ? '1px solid rgba(124,58,237,0.45)'
                       : '1px solid transparent',
-
                   borderRadius: 7,
-
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-
                   transition:
                     'all 0.15s ease'
                 }}
@@ -529,14 +491,12 @@ const CreateHabitModal = ({
             className="form-input"
             placeholder="Why is this quest important for your growth?"
             value={form.description}
-
             onChange={e =>
               handleChange(
                 'description',
                 e.target.value
               )
             }
-
             style={{
               borderColor: errors.description
                 ? 'var(--red)'
@@ -568,15 +528,12 @@ const CreateHabitModal = ({
             display: 'grid',
             gridTemplateColumns:
               '1fr 1fr',
-
             gap: 12,
-
             marginBottom: 16
           }}
         >
 
           <div>
-
             <label className="form-label">
               Category
             </label>
@@ -584,7 +541,6 @@ const CreateHabitModal = ({
             <select
               className="form-select"
               value={form.category}
-
               onChange={e =>
                 handleChange(
                   'category',
@@ -592,7 +548,6 @@ const CreateHabitModal = ({
                 )
               }
             >
-
               {CATEGORIES.map(category => (
                 <option
                   key={category}
@@ -601,14 +556,11 @@ const CreateHabitModal = ({
                   {category}
                 </option>
               ))}
-
             </select>
-
           </div>
 
 
           <div>
-
             <label className="form-label">
               Difficulty
             </label>
@@ -616,7 +568,6 @@ const CreateHabitModal = ({
             <select
               className="form-select"
               value={form.difficulty}
-
               onChange={e =>
                 handleChange(
                   'difficulty',
@@ -624,7 +575,6 @@ const CreateHabitModal = ({
                 )
               }
             >
-
               {DIFFICULTIES.map(difficulty => (
                 <option
                   key={difficulty}
@@ -633,9 +583,7 @@ const CreateHabitModal = ({
                   {difficulty}
                 </option>
               ))}
-
             </select>
-
           </div>
 
         </div>
@@ -650,17 +598,14 @@ const CreateHabitModal = ({
             display: 'grid',
             gridTemplateColumns:
               '1fr 1fr',
-
             gap: 12,
-
             marginBottom: 18
           }}
         >
 
-          {/* Full Target */}
+          {/* FULL TARGET */}
 
           <div>
-
             <label className="form-label">
               Full Target *
             </label>
@@ -677,14 +622,12 @@ const CreateHabitModal = ({
                 pattern="[0-9]*"
                 placeholder="e.g. 60"
                 value={form.target}
-
                 onChange={e =>
                   handleTargetChange(
                     'target',
                     e.target.value
                   )
                 }
-
                 style={{
                   paddingRight: 68,
                   borderColor: errors.target
@@ -700,14 +643,10 @@ const CreateHabitModal = ({
                   top: '50%',
                   transform:
                     'translateY(-50%)',
-
                   color:
                     'var(--text-muted)',
-
                   fontSize: 12,
-
                   fontWeight: 500,
-
                   pointerEvents: 'none'
                 }}
               >
@@ -726,14 +665,12 @@ const CreateHabitModal = ({
                 {errors.target}
               </div>
             )}
-
           </div>
 
 
-          {/* Minimum Target */}
+          {/* MINIMUM TARGET */}
 
           <div>
-
             <label className="form-label">
               Minimum Target *
             </label>
@@ -750,14 +687,12 @@ const CreateHabitModal = ({
                 pattern="[0-9]*"
                 placeholder="e.g. 10"
                 value={form.minimumTarget}
-
                 onChange={e =>
                   handleTargetChange(
                     'minimumTarget',
                     e.target.value
                   )
                 }
-
                 style={{
                   paddingRight: 68,
                   borderColor:
@@ -774,14 +709,10 @@ const CreateHabitModal = ({
                   top: '50%',
                   transform:
                     'translateY(-50%)',
-
                   color:
                     'var(--text-muted)',
-
                   fontSize: 12,
-
                   fontWeight: 500,
-
                   pointerEvents: 'none'
                 }}
               >
@@ -800,7 +731,6 @@ const CreateHabitModal = ({
                 {errors.minimumTarget}
               </div>
             )}
-
           </div>
 
         </div>
@@ -837,47 +767,35 @@ const CreateHabitModal = ({
                 <button
                   key={stat.value}
                   type="button"
-
                   onClick={() =>
                     handleChange(
                       'stat',
                       stat.value
                     )
                   }
-
                   style={{
                     padding:
                       '7px 11px',
-
                     borderRadius: 8,
-
                     fontSize: 12,
-
                     fontWeight: 600,
-
                     cursor: 'pointer',
-
                     border: selected
                       ? `1px solid ${stat.color}`
                       : '1px solid rgba(255,255,255,0.10)',
-
                     background: selected
                       ? `${stat.color}18`
                       : 'rgba(255,255,255,0.025)',
-
                     color: selected
                       ? stat.color
                       : 'var(--text-secondary)',
-
                     display: 'flex',
                     alignItems: 'center',
                     gap: 5,
-
                     transition:
                       'all 0.15s ease'
                   }}
                 >
-
                   <span>
                     {stat.icon}
                   </span>
@@ -885,13 +803,11 @@ const CreateHabitModal = ({
                   <span>
                     {stat.label}
                   </span>
-
                 </button>
               );
             })}
 
           </div>
-
         </div>
 
 
@@ -903,17 +819,11 @@ const CreateHabitModal = ({
           style={{
             background:
               'rgba(255,255,255,0.025)',
-
             border:
               '1px solid rgba(255,255,255,0.10)',
-
             borderRadius: 12,
-
-            padding:
-              '13px 15px',
-
+            padding: '13px 15px',
             marginBottom: 20,
-
             display: 'flex',
             alignItems: 'center',
             justifyContent:
@@ -928,13 +838,10 @@ const CreateHabitModal = ({
                 fontSize: 10,
                 color:
                   'var(--text-muted)',
-
                 textTransform:
                   'uppercase',
-
                 letterSpacing:
                   '0.08em',
-
                 marginBottom: 4
               }}
             >
@@ -944,10 +851,8 @@ const CreateHabitModal = ({
             <div
               style={{
                 fontSize: 13,
-
                 color:
                   'var(--text-primary)',
-
                 fontWeight: 600
               }}
             >
@@ -994,35 +899,24 @@ const CreateHabitModal = ({
 
         <button
           type="submit"
-
           disabled={loading}
-
           className="btn btn-primary"
-
           style={{
             width: '100%',
-
             paddingTop: 13,
             paddingBottom: 13,
-
             fontSize: 15,
-
-            opacity:
-              loading
-                ? 0.6
-                : 1,
-
+            opacity: loading ? 0.6 : 1,
             transition:
-              'opacity 0.2s ease'
+              'opacity 0.2s ease',
+            marginBottom: 4
           }}
         >
-
           {loading
             ? 'Saving Quest...'
             : editHabit
             ? 'Update Quest'
             : 'Add Quest to Log'}
-
         </button>
 
       </form>
