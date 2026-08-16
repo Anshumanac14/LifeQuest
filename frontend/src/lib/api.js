@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://lifequest-hvfg.onrender.com/api',
+  baseURL: '/api',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -24,12 +24,23 @@ api.interceptors.request.use(
 // Response interceptor - handle auth errors
 api.interceptors.response.use(
   (response) => response,
+
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('lq_token');
       localStorage.removeItem('lq_user');
 
-      window.location.href = '/login';
+      // Don't redirect/reload when the user is already
+      // on an authentication page.
+      const currentPath = window.location.pathname;
+
+      const isAuthPage =
+        currentPath === '/login' ||
+        currentPath === '/register';
+
+      if (!isAuthPage) {
+        window.location.href = '/login';
+      }
     }
 
     return Promise.reject(error);
