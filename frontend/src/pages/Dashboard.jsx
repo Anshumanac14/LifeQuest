@@ -36,7 +36,6 @@ const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editHabit, setEditHabit] = useState(null);
 
-  // Custom delete modal
   const [deleteHabit, setDeleteHabit] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -178,12 +177,10 @@ const Dashboard = () => {
     }
   };
 
-  // Open custom delete modal
   const handleDeleteHabit = (habit) => {
     setDeleteHabit(habit);
   };
 
-  // Actually delete the habit after confirmation
   const confirmDeleteHabit = async () => {
     if (!deleteHabit) return;
 
@@ -200,15 +197,12 @@ const Dashboard = () => {
 
       fetchDashboard();
     } catch (err) {
-      toast.error(
-        'Failed to delete habit'
-      );
+      toast.error('Failed to delete habit');
     } finally {
       setIsDeleting(false);
     }
   };
 
-  // Close delete modal
   const cancelDeleteHabit = () => {
     if (isDeleting) return;
 
@@ -339,15 +333,9 @@ const Dashboard = () => {
   const momentum = getMomentumState();
 
   return (
-    <div
-      style={{
-        maxWidth: 1200,
-        margin: '0 auto',
-        paddingBottom: 40,
-      }}
-    >
+    <div className="dashboard-container">
       {/* =====================================================
-          CUSTOM DELETE MODAL
+          DELETE MODAL
           ===================================================== */}
 
       <AnimatePresence>
@@ -356,23 +344,7 @@ const Dashboard = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            style={{
-              position: 'fixed',
-              inset: 0,
-              zIndex: 9999,
-
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-
-              padding: 20,
-
-              background:
-                'rgba(3, 5, 15, 0.78)',
-
-              backdropFilter: 'blur(10px)',
-              WebkitBackdropFilter: 'blur(10px)',
-            }}
+            className="delete-modal-overlay"
             onClick={cancelDeleteHabit}
           >
             <motion.div
@@ -395,253 +367,58 @@ const Dashboard = () => {
                 duration: 0.2,
                 ease: 'easeOut',
               }}
+              className="delete-modal"
               onClick={(e) =>
                 e.stopPropagation()
               }
-              style={{
-                width: '100%',
-                maxWidth: 460,
-
-                background:
-                  'linear-gradient(145deg, rgba(18,24,39,0.98), rgba(10,14,26,0.98))',
-
-                border:
-                  '1px solid rgba(239,68,68,0.45)',
-
-                borderRadius: 20,
-
-                padding: 28,
-
-                position: 'relative',
-
-                boxShadow:
-                  '0 25px 80px rgba(0,0,0,0.55), 0 0 30px rgba(239,68,68,0.08)',
-              }}
             >
-              {/* Close button */}
               <button
                 type="button"
                 onClick={cancelDeleteHabit}
                 disabled={isDeleting}
-                style={{
-                  position: 'absolute',
-                  top: 16,
-                  right: 16,
-
-                  width: 36,
-                  height: 36,
-
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-
-                  borderRadius: 10,
-
-                  border:
-                    '1px solid var(--glass-border)',
-
-                  background:
-                    'rgba(255,255,255,0.035)',
-
-                  color:
-                    'var(--text-muted)',
-
-                  cursor: isDeleting
-                    ? 'not-allowed'
-                    : 'pointer',
-
-                  opacity: isDeleting
-                    ? 0.5
-                    : 1,
-                }}
+                className="delete-modal-close"
               >
                 <X size={18} />
               </button>
 
-              {/* Warning icon */}
-              <div
-                style={{
-                  width: 58,
-                  height: 58,
-
-                  borderRadius: 16,
-
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-
-                  background:
-                    'rgba(239,68,68,0.08)',
-
-                  border:
-                    '1px solid rgba(239,68,68,0.35)',
-
-                  color: '#ef4444',
-
-                  marginBottom: 20,
-                }}
-              >
+              <div className="delete-warning-icon">
                 <AlertTriangle size={28} />
               </div>
 
-              {/* Title */}
-              <h2
-                style={{
-                  fontFamily:
-                    'Rajdhani, sans-serif',
+              <h2>Delete Habit?</h2>
 
-                  fontSize: 26,
-
-                  fontWeight: 800,
-
-                  marginBottom: 8,
-
-                  color:
-                    'var(--text-primary)',
-                }}
-              >
-                Delete Habit?
-              </h2>
-
-              {/* Message */}
-              <p
-                style={{
-                  color:
-                    'var(--text-secondary)',
-
-                  fontSize: 14,
-
-                  lineHeight: 1.6,
-
-                  marginBottom: 8,
-                }}
-              >
-                Are you sure you want to
-                delete{' '}
-                <strong
-                  style={{
-                    color:
-                      'var(--text-primary)',
-                  }}
-                >
+              <p className="delete-message">
+                Are you sure you want to delete{' '}
+                <strong>
                   "{deleteHabit.name}"
                 </strong>
                 ?
               </p>
 
-              <p
-                style={{
-                  color:
-                    'var(--text-muted)',
-
-                  fontSize: 12,
-
-                  lineHeight: 1.6,
-
-                  marginBottom: 24,
-                }}
-              >
+              <p className="delete-warning-text">
                 This action cannot be undone.
-                Your habit history and
-                progress associated with
-                this habit may also be
-                removed.
+                Your habit history and progress
+                associated with this habit may also
+                be removed.
               </p>
 
-              {/* Buttons */}
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent:
-                    'flex-end',
-
-                  gap: 10,
-
-                  flexWrap: 'wrap',
-                }}
-              >
+              <div className="delete-modal-buttons">
                 <button
                   type="button"
-                  onClick={
-                    cancelDeleteHabit
-                  }
+                  onClick={cancelDeleteHabit}
                   disabled={isDeleting}
-                  style={{
-                    padding:
-                      '10px 18px',
-
-                    borderRadius: 10,
-
-                    border:
-                      '1px solid var(--glass-border)',
-
-                    background:
-                      'rgba(255,255,255,0.035)',
-
-                    color:
-                      'var(--text-secondary)',
-
-                    fontSize: 14,
-
-                    fontWeight: 600,
-
-                    cursor: isDeleting
-                      ? 'not-allowed'
-                      : 'pointer',
-
-                    opacity: isDeleting
-                      ? 0.5
-                      : 1,
-                  }}
+                  className="delete-cancel-btn"
                 >
                   Cancel
                 </button>
 
                 <button
                   type="button"
-                  onClick={
-                    confirmDeleteHabit
-                  }
+                  onClick={confirmDeleteHabit}
                   disabled={isDeleting}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent:
-                      'center',
-
-                    gap: 7,
-
-                    padding:
-                      '10px 18px',
-
-                    borderRadius: 10,
-
-                    border:
-                      '1px solid rgba(239,68,68,0.55)',
-
-                    background:
-                      'linear-gradient(135deg, #ef4444, #dc2626)',
-
-                    color: '#fff',
-
-                    fontSize: 14,
-
-                    fontWeight: 700,
-
-                    cursor: isDeleting
-                      ? 'not-allowed'
-                      : 'pointer',
-
-                    opacity: isDeleting
-                      ? 0.7
-                      : 1,
-
-                    boxShadow:
-                      '0 5px 18px rgba(239,68,68,0.2)',
-                  }}
+                  className="delete-confirm-btn"
                 >
                   <Trash2 size={15} />
-
                   {isDeleting
                     ? 'Deleting...'
                     : 'Delete Habit'}
@@ -653,7 +430,7 @@ const Dashboard = () => {
       </AnimatePresence>
 
       {/* =====================================================
-          FLOATING XP
+          XP FLOAT
           ===================================================== */}
 
       {xpFloats.map((item) => (
@@ -719,36 +496,14 @@ const Dashboard = () => {
         transition={{
           duration: 0.4,
         }}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          marginBottom: 24,
-          flexWrap: 'wrap',
-          gap: 16,
-        }}
+        className="dashboard-header"
       >
         <div>
-          <div
-            style={{
-              fontSize: 13,
-              color: 'var(--text-muted)',
-              textTransform: 'uppercase',
-              letterSpacing: 1,
-              fontWeight: 600,
-            }}
-          >
+          <div className="dashboard-label">
             COMMAND CENTER
           </div>
 
-          <h1
-            style={{
-              fontFamily:
-                'Rajdhani, sans-serif',
-              fontSize: 34,
-              fontWeight: 700,
-            }}
-          >
+          <h1>
             Welcome,{' '}
             <span className="gradient-text">
               {userData?.name || 'Hero'}
@@ -756,21 +511,16 @@ const Dashboard = () => {
           </h1>
         </div>
 
-        <div
-          style={{
-            display: 'flex',
-            gap: 10,
-          }}
-        >
+        <div className="dashboard-header-actions">
           <button
             className="btn btn-secondary"
             onClick={fetchDashboard}
-            style={{
-              padding: '10px 14px',
-            }}
             title="Refresh dashboard"
           >
             <RefreshCw size={16} />
+            <span className="mobile-button-text">
+              Refresh
+            </span>
           </button>
 
           <button
@@ -779,12 +529,9 @@ const Dashboard = () => {
               setEditHabit(null);
               setIsModalOpen(true);
             }}
-            style={{
-              padding: '10px 20px',
-              fontSize: 14,
-            }}
           >
-            <Plus size={16} /> Forge Quest
+            <Plus size={16} />
+            Forge Quest
           </button>
         </div>
       </motion.div>
@@ -803,72 +550,18 @@ const Dashboard = () => {
             opacity: 1,
             y: 0,
           }}
-          style={{
-            background:
-              'linear-gradient(135deg, rgba(245,158,11,0.18), rgba(245,158,11,0.05))',
-
-            border:
-              '1px solid rgba(245,158,11,0.4)',
-
-            borderRadius: 18,
-
-            padding: '18px 22px',
-
-            marginBottom: 24,
-
-            display: 'flex',
-            alignItems: 'center',
-            gap: 16,
-
-            boxShadow:
-              '0 0 20px rgba(245,158,11,0.15)',
-          }}
+          className="recovery-banner"
         >
-          <div
-            style={{
-              width: 48,
-              height: 48,
-              borderRadius: 14,
-
-              background:
-                'rgba(245,158,11,0.25)',
-
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-
-              fontSize: 24,
-              flexShrink: 0,
-
-              border:
-                '1px solid rgba(245,158,11,0.4)',
-            }}
-          >
+          <div className="recovery-icon">
             🌅
           </div>
 
-          <div
-            style={{
-              flex: 1,
-            }}
-          >
-            <div
-              style={{
-                fontWeight: 700,
-                color: 'var(--amber)',
-                fontSize: 16,
-              }}
-            >
+          <div className="recovery-content">
+            <div className="recovery-title">
               RECOVERY MODE ACTIVE
             </div>
 
-            <div
-              style={{
-                fontSize: 13,
-                color: 'var(--text-secondary)',
-                marginTop: 2,
-              }}
-            >
+            <div className="recovery-text">
               You haven't failed. One break day
               does not erase your dedication!
               Complete any quest today to restore
@@ -886,15 +579,7 @@ const Dashboard = () => {
           XP + STREAK
           ===================================================== */}
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns:
-            'repeat(auto-fit, minmax(320px, 1fr))',
-          gap: 16,
-          marginBottom: 24,
-        }}
-      >
+      <div className="dashboard-xp-grid">
         <XPBar
           currentXp={userData?.xp || 0}
           nextLevelXp={
@@ -919,146 +604,45 @@ const Dashboard = () => {
             duration: 0.5,
             delay: 0.15,
           }}
-          style={{
-            background:
-              'linear-gradient(135deg, rgba(245,158,11,0.08), rgba(124,58,237,0.05))',
-
-            border:
-              '1px solid rgba(245,158,11,0.18)',
-
-            borderRadius: 20,
-
-            padding: '18px 20px',
-
-            position: 'relative',
-
-            overflow: 'hidden',
-          }}
+          className="streak-card"
         >
           <motion.div
             animate={{
-              opacity: [
-                0.1,
-                0.22,
-                0.1,
-              ],
-              scale: [
-                1,
-                1.1,
-                1,
-              ],
+              opacity: [0.1, 0.22, 0.1],
+              scale: [1, 1.1, 1],
             }}
             transition={{
               duration: 4,
               repeat: Infinity,
               ease: 'easeInOut',
             }}
-            style={{
-              position: 'absolute',
-
-              width: 150,
-              height: 150,
-
-              borderRadius: '50%',
-
-              background:
-                'radial-gradient(circle, rgba(245,158,11,0.25), transparent 70%)',
-
-              top: -80,
-              right: -40,
-
-              pointerEvents: 'none',
-            }}
+            className="streak-glow"
           />
 
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-
-              marginBottom: 14,
-
-              position: 'relative',
-              zIndex: 1,
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 10,
-              }}
-            >
+          <div className="streak-header">
+            <div className="streak-title-wrapper">
               <motion.div
                 animate={{
-                  scale: [
-                    1,
-                    1.12,
-                    1,
-                  ],
-                  rotate: [
-                    -2,
-                    2,
-                    -2,
-                  ],
+                  scale: [1, 1.12, 1],
+                  rotate: [-2, 2, -2],
                 }}
                 transition={{
                   duration: 1.8,
                   repeat: Infinity,
                   ease: 'easeInOut',
                 }}
-                style={{
-                  width: 44,
-                  height: 44,
-
-                  borderRadius: 13,
-
-                  background:
-                    'rgba(245,158,11,0.13)',
-
-                  border:
-                    '1px solid rgba(245,158,11,0.28)',
-
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-
-                  fontSize: 23,
-
-                  boxShadow:
-                    '0 0 20px rgba(245,158,11,0.12)',
-                }}
+                className="streak-icon"
               >
                 🔥
               </motion.div>
 
               <div>
-                <div
-                  style={{
-                    fontFamily:
-                      'Rajdhani, sans-serif',
-
-                    fontSize: 22,
-
-                    fontWeight: 800,
-
-                    color: 'var(--amber)',
-                  }}
-                >
+                <div className="streak-title">
                   {currentStreak} Day Streak
                 </div>
 
-                <div
-                  style={{
-                    fontSize: 11,
-                    color: 'var(--text-muted)',
-                  }}
-                >
-                  Best:{' '}
-                  {userData?.bestStreak ||
-                    0}{' '}
-                  days
+                <div className="streak-best">
+                  Best: {userData?.bestStreak || 0} days
                 </div>
               </div>
             </div>
@@ -1068,87 +652,25 @@ const Dashboard = () => {
             </span>
           </div>
 
-          <div
-            style={{
-              background:
-                'rgba(255,255,255,0.025)',
-
-              border:
-                '1px solid rgba(255,255,255,0.05)',
-
-              borderRadius: 12,
-
-              padding: '9px 11px',
-
-              marginBottom: 14,
-
-              fontSize: 12,
-
-              color:
-                'var(--text-secondary)',
-
-              position: 'relative',
-              zIndex: 1,
-            }}
-          >
+          <div className="momentum-message">
             {momentum.message}
           </div>
 
-          <div
-            style={{
-              position: 'relative',
-              zIndex: 1,
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                justifyContent:
-                  'space-between',
-
-                fontSize: 11,
-
-                color:
-                  'var(--text-muted)',
-
-                marginBottom: 6,
-              }}
-            >
+          <div>
+            <div className="milestone-info">
               <span>
                 Next milestone:{' '}
-                <strong
-                  style={{
-                    color:
-                      'var(--text-secondary)',
-                  }}
-                >
+                <strong>
                   {nextMilestone.title}
                 </strong>
               </span>
 
-              <span
-                style={{
-                  color: 'var(--amber)',
-                  fontWeight: 700,
-                }}
-              >
-                {daysLeftMilestone}d
-                left
+              <span className="milestone-days">
+                {daysLeftMilestone}d left
               </span>
             </div>
 
-            <div
-              style={{
-                height: 7,
-
-                background:
-                  'rgba(255,255,255,0.06)',
-
-                borderRadius: 999,
-
-                overflow: 'hidden',
-              }}
-            >
+            <div className="milestone-track">
               <motion.div
                 initial={{
                   width: 0,
@@ -1160,47 +682,18 @@ const Dashboard = () => {
                   duration: 1,
                   ease: 'easeOut',
                 }}
-                style={{
-                  height: '100%',
-
-                  borderRadius: 999,
-
-                  background:
-                    'linear-gradient(90deg, #f59e0b, #fbbf24)',
-
-                  boxShadow:
-                    '0 0 12px rgba(245,158,11,0.4)',
-                }}
+                className="milestone-progress"
               />
             </div>
           </div>
 
-          <div
-            style={{
-              display: 'flex',
-              justifyContent:
-                'space-between',
-
-              marginTop: 12,
-
-              fontSize: 10,
-
-              color:
-                'var(--text-muted)',
-            }}
-          >
+          <div className="consistency-row">
             <span>
               📊 Consistency
             </span>
 
-            <strong
-              style={{
-                color: 'var(--amber)',
-              }}
-            >
-              {userData?.consistency ||
-                0}
-              %
+            <strong>
+              {userData?.consistency || 0}%
             </strong>
           </div>
         </motion.div>
@@ -1210,62 +703,23 @@ const Dashboard = () => {
           MAIN GRID
           ===================================================== */}
 
-      <div
-        style={{
-          display: 'grid',
-
-          gridTemplateColumns:
-            'minmax(0, 1fr) 340px',
-
-          gap: 24,
-        }}
-      >
+      <div className="dashboard-main-grid">
         {/* LEFT */}
-        <div>
+        <div className="dashboard-left">
           {/* Today's Quests */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent:
-                'space-between',
-
-              marginBottom: 16,
-
-              gap: 10,
-
-              flexWrap: 'wrap',
-            }}
-          >
-            <h2
-              style={{
-                fontSize: 20,
-                fontWeight: 700,
-
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8,
-              }}
-            >
+          <div className="quests-header">
+            <h2>
               <span>⚔️</span>
-
               Today's Quests (
               {
                 habits.filter(
-                  (h) =>
-                    h.completedToday
+                  (h) => h.completedToday
                 ).length
               }
               /{habits.length})
             </h2>
 
-            <span
-              style={{
-                fontSize: 13,
-                color:
-                  'var(--text-muted)',
-              }}
-            >
+            <span>
               {habits.length === 0
                 ? 'No quests forged'
                 : 'Complete to earn XP & Stat gains'}
@@ -1274,59 +728,19 @@ const Dashboard = () => {
 
           {/* Habit Cards */}
           {habits.length === 0 ? (
-            <div
-              style={{
-                background:
-                  'var(--glass-bg)',
-
-                border:
-                  '1px dashed var(--glass-border)',
-
-                borderRadius: 20,
-
-                padding:
-                  '48px 20px',
-
-                textAlign: 'center',
-              }}
-            >
-              <div
-                style={{
-                  fontSize: 44,
-                  marginBottom: 14,
-                }}
-              >
+            <div className="empty-quest-card">
+              <div className="empty-quest-icon">
                 ⚡
               </div>
 
-              <h3
-                style={{
-                  fontSize: 20,
-                  fontWeight: 700,
-                  marginBottom: 6,
-                }}
-              >
-                Your Quest Log
-                is Empty
+              <h3>
+                Your Quest Log is Empty
               </h3>
 
-              <p
-                style={{
-                  color:
-                    'var(--text-muted)',
-
-                  fontSize: 14,
-
-                  margin:
-                    '0 auto 24px',
-
-                  maxWidth: 400,
-                }}
-              >
-                Forge your first habit
-                quest to start gaining
-                XP, leveling up stats,
-                and slaying weekly
+              <p>
+                Forge your first habit quest
+                to start gaining XP, leveling
+                up stats, and slaying weekly
                 bosses!
               </p>
 
@@ -1341,64 +755,41 @@ const Dashboard = () => {
               </button>
             </div>
           ) : (
-            <div
-              style={{
-                display: 'flex',
-                flexDirection:
-                  'column',
-
-                gap: 14,
-
-                marginBottom: 32,
-              }}
-            >
-              {habits.map(
-                (habit) => (
-                  <HabitCard
-                    key={habit._id}
-                    habit={habit}
-
-                    onComplete={() =>
-                      handleCompleteHabit(
-                        habit,
-                        false
-                      )
-                    }
-
-                    onMinComplete={() =>
-                      handleCompleteHabit(
-                        habit,
-                        true
-                      )
-                    }
-
-                    onEdit={(h) => {
-                      setEditHabit(h);
-                      setIsModalOpen(
-                        true
-                      );
-                    }}
-
-                    onDelete={
-                      handleDeleteHabit
-                    }
-
-                    onTogglePause={
-                      handleTogglePause
-                    }
-                  />
-                )
-              )}
+            <div className="habit-list">
+              {habits.map((habit) => (
+                <HabitCard
+                  key={habit._id}
+                  habit={habit}
+                  onComplete={() =>
+                    handleCompleteHabit(
+                      habit,
+                      false
+                    )
+                  }
+                  onMinComplete={() =>
+                    handleCompleteHabit(
+                      habit,
+                      true
+                    )
+                  }
+                  onEdit={(h) => {
+                    setEditHabit(h);
+                    setIsModalOpen(true);
+                  }}
+                  onDelete={
+                    handleDeleteHabit
+                  }
+                  onTogglePause={
+                    handleTogglePause
+                  }
+                />
+              ))}
             </div>
           )}
 
           {/* Weekly Boss */}
           {weeklyBoss && (
-            <div
-              style={{
-                marginBottom: 32,
-              }}
-            >
+            <div className="weekly-boss">
               <BossCard
                 boss={weeklyBoss}
               />
@@ -1407,70 +798,25 @@ const Dashboard = () => {
         </div>
 
         {/* RIGHT */}
-        <div
-          style={{
-            display: 'flex',
-            flexDirection:
-              'column',
-
-            gap: 24,
-          }}
-        >
+        <div className="dashboard-right">
           {/* Character Stats */}
-          <div
-            style={{
-              background:
-                'var(--glass-bg)',
-
-              border:
-                '1px solid var(--glass-border)',
-
-              borderRadius: 20,
-
-              padding: 20,
-            }}
-          >
-            <h3
-              style={{
-                fontSize: 16,
-                fontWeight: 700,
-
-                marginBottom: 14,
-
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8,
-              }}
-            >
+          <div className="glass-card">
+            <h3 className="card-heading">
               <span>🧠</span>
               Character Stats
             </h3>
 
-            <div
-              style={{
-                display: 'grid',
-
-                gridTemplateColumns:
-                  '1fr 1fr',
-
-                gap: 10,
-              }}
-            >
+            <div className="character-stats-grid">
               {Object.entries(
                 userData?.stats || {}
               ).map(
                 (
-                  [
-                    statName,
-                    val,
-                  ],
+                  [statName, val],
                   idx
                 ) => (
                   <StatCard
                     key={statName}
-                    statName={
-                      statName
-                    }
+                    statName={statName}
                     value={val}
                     index={idx}
                   />
@@ -1480,75 +826,22 @@ const Dashboard = () => {
           </div>
 
           {/* Achievements */}
-          <div
-            style={{
-              background:
-                'var(--glass-bg)',
-
-              border:
-                '1px solid var(--glass-border)',
-
-              borderRadius: 20,
-
-              padding: 20,
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent:
-                  'space-between',
-
-                marginBottom: 14,
-              }}
-            >
-              <h3
-                style={{
-                  fontSize: 16,
-                  fontWeight: 700,
-
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
-                }}
-              >
+          <div className="glass-card">
+            <div className="achievements-heading">
+              <h3 className="card-heading">
                 <span>🏆</span>
                 Recent Achievements
               </h3>
             </div>
 
-            {achievements.length ===
-            0 ? (
-              <div
-                style={{
-                  fontSize: 13,
-
-                  color:
-                    'var(--text-muted)',
-
-                  textAlign: 'center',
-
-                  padding:
-                    '20px 0',
-                }}
-              >
-                No achievements
-                unlocked yet.
-                Complete quests to
-                earn your first
-                trophy!
+            {achievements.length === 0 ? (
+              <div className="no-achievements">
+                No achievements unlocked yet.
+                Complete quests to earn your
+                first trophy!
               </div>
             ) : (
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection:
-                    'column',
-
-                  gap: 10,
-                }}
-              >
+              <div className="achievement-list">
                 {achievements.map(
                   (ach) => (
                     <motion.div
@@ -1564,59 +857,19 @@ const Dashboard = () => {
                       whileHover={{
                         x: 3,
                       }}
-                      style={{
-                        display:
-                          'flex',
-
-                        alignItems:
-                          'center',
-
-                        gap: 10,
-
-                        padding:
-                          '10px 12px',
-
-                        background:
-                          'rgba(255,255,255,0.03)',
-
-                        borderRadius: 12,
-
-                        border:
-                          '1px solid var(--border)',
-                      }}
+                      className="achievement-item"
                     >
-                      <span
-                        style={{
-                          fontSize: 22,
-                        }}
-                      >
+                      <span className="achievement-icon">
                         {ach.icon}
                       </span>
 
-                      <div
-                        style={{
-                          flex: 1,
-                        }}
-                      >
-                        <div
-                          style={{
-                            fontSize: 13,
-                            fontWeight: 600,
-                          }}
-                        >
+                      <div className="achievement-content">
+                        <div className="achievement-name">
                           {ach.name}
                         </div>
 
-                        <div
-                          style={{
-                            fontSize: 11,
-                            color:
-                              'var(--text-muted)',
-                          }}
-                        >
-                          {
-                            ach.description
-                          }
+                        <div className="achievement-description">
+                          {ach.description}
                         </div>
                       </div>
                     </motion.div>

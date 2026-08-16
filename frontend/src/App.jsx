@@ -19,48 +19,152 @@ import SettingsPage from './pages/SettingsPage';
 import AppLayout from './components/layout/AppLayout';
 import LoadingScreen from './components/ui/LoadingScreen';
 
-// Protected route wrapper
+
+// ============================================================
+// PROTECTED ROUTE
+// ============================================================
+
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
-  if (loading) return <LoadingScreen />;
-  if (!isAuthenticated) return <Navigate to="/login" replace />;
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
   return children;
 };
 
-// Public route (redirect to dashboard if logged in)
+
+// ============================================================
+// PUBLIC ROUTE
+// ============================================================
+
 const PublicRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
-  if (loading) return <LoadingScreen />;
-  if (isAuthenticated) return <Navigate to="/dashboard" replace />;
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
+
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
   return children;
 };
+
+
+// ============================================================
+// APP
+// ============================================================
 
 function App() {
   const { loading } = useAuth();
-  if (loading) return <LoadingScreen />;
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <AnimatePresence mode="wait">
       <Routes>
-        {/* Public */}
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
-        <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
 
-        {/* Protected - App Layout */}
-        <Route path="/" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="quests" element={<QuestsPage />} />
-          <Route path="habits" element={<HabitsPage />} />
-          <Route path="character" element={<CharacterPage />} />
-          <Route path="skill-tree" element={<SkillTreePage />} />
-          <Route path="achievements" element={<AchievementsPage />} />
-          <Route path="analytics" element={<AnalyticsPage />} />
-          <Route path="settings" element={<SettingsPage />} />
+        {/* ==================================================
+            PUBLIC ROUTES
+            ================================================== */}
+
+        <Route
+          path="/"
+          element={<LandingPage />}
+        />
+
+        <Route
+          path="/login"
+          element={
+            <PublicRoute>
+              <LoginPage />
+            </PublicRoute>
+          }
+        />
+
+        <Route
+          path="/register"
+          element={
+            <PublicRoute>
+              <RegisterPage />
+            </PublicRoute>
+          }
+        />
+
+
+        {/* ==================================================
+            PROTECTED APP
+            ================================================== */}
+
+        <Route
+          element={
+            <ProtectedRoute>
+              <AppLayout />
+            </ProtectedRoute>
+          }
+        >
+
+          <Route
+            path="/dashboard"
+            element={<Dashboard />}
+          />
+
+          <Route
+            path="/quests"
+            element={<QuestsPage />}
+          />
+
+          <Route
+            path="/habits"
+            element={<HabitsPage />}
+          />
+
+          <Route
+            path="/character"
+            element={<CharacterPage />}
+          />
+
+          <Route
+            path="/skill-tree"
+            element={<SkillTreePage />}
+          />
+
+          <Route
+            path="/achievements"
+            element={<AchievementsPage />}
+          />
+
+          <Route
+            path="/analytics"
+            element={<AnalyticsPage />}
+          />
+
+          <Route
+            path="/settings"
+            element={<SettingsPage />}
+          />
+
         </Route>
 
-        {/* Catch all */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+
+        {/* ==================================================
+            CATCH ALL
+            ================================================== */}
+
+        <Route
+          path="*"
+          element={<Navigate to="/" replace />}
+        />
+
       </Routes>
     </AnimatePresence>
   );
