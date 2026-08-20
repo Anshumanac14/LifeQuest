@@ -13,14 +13,14 @@ export default defineConfig({
         name: 'LifeQuest',
         short_name: 'LifeQuest',
         description: 'Level up your life, one habit at a time.',
-        theme_color: '#111827',
-        background_color: '#111827',
-        display: 'standalone',
-        orientation: 'portrait',
+        id: '/',
         start_url: '/',
         scope: '/',
+        display: 'standalone',
+        orientation: 'portrait',
+        background_color: '#111827',
+        theme_color: '#111827',
         lang: 'en',
-        dir: 'ltr',
 
         icons: [
           {

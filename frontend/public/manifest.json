@@ -1,0 +1,47 @@
+{
+  "background_color": "#111827",
+  "description": "Level up your life, one habit at a time.",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "LifeQuest",
+  "orientation": "portrait",
+  "scope": "/",
+  "short_name": "LifeQuest",
+  "start_url": "/",
+  "theme_color": "#111827",
+  "icons": [
+    {
+      "src": "https://lifequest-frontend-vte4.onrender.com/vite.svg",
+      "type": "image/svg+xml",
+      "isSquare": false,
+      "isPng": false,
+      "isWebp": false,
+      "isJpg": false,
+      "width": 0,
+      "is512x512": false,
+      "is256x256": false,
+      "is192x192": false
+    },
+    {
+      "src": "https://lifequest-frontend-vte4.onrender.com/favicon.ico",
+      "type": "image/x-icon",
+      "isSquare": false,
+      "isPng": false,
+      "isWebp": false,
+      "isJpg": false,
+      "width": 0,
+      "is512x512": false,
+      "is256x256": false,
+      "is192x192": false
+    }
+  ],
+  "id": "/",
+  "lang": "en",
+  "categories": [
+    "education",
+    "fitness",
+    "health &amp; fitness",
+    "personalization",
+    "productivity"
+  ]
+}
