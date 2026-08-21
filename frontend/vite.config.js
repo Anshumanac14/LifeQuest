@@ -18,9 +18,11 @@ export default defineConfig({
         scope: '/',
         display: 'standalone',
         orientation: 'portrait',
+        lang: 'en',
+        dir: 'ltr',
+
         background_color: '#111827',
         theme_color: '#111827',
-        lang: 'en',
 
         icons: [
           {
